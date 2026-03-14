@@ -14,6 +14,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from shared.views import send_email
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class SignUpView(CreateAPIView):
     permission_classes = (AllowAny, )
@@ -126,3 +128,38 @@ class LoginView(TokenObtainPairView):
 #         }
 #
 #         return Response(data)
+
+
+
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def post(self,request):
+        refresh=self.request.data.get('refresh')
+        try:
+            refresh_token=RefreshToken(refresh)
+            refresh_token.blacklist()
+        except Exception as e:
+            raise ValidationError(detail=f" xatolik {e}")
+        else:
+            response={
+                'status':status.HTTP_200_OK,
+                'message':"Siz logout qildiz"
+            }
+        return Response(response)
+
+
+class RefreshTokenView(APIView):
+    def post(self,request):
+        refresh=self.request.data.get('refresh')
+        try:
+            refresh_token=RefreshToken(refresh)
+        except Exception as e:
+            raise ValidationError(detail=f"xato yoki vaqti tugadi {e}")
+        else:
+            response={
+                'status':status.HTTP_200_OK,
+                'message':'sizni tokeniz yangilandi',
+                'access':str(refresh_token.access_token)
+            }
+        return Response(response)
