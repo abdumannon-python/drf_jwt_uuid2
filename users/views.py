@@ -1,3 +1,4 @@
+from functools import partial
 
 from rest_framework.generics import CreateAPIView,UpdateAPIView
 from rest_framework.permissions import AllowAny,IsAuthenticated
@@ -218,3 +219,40 @@ class ResetPasswordView(APIView):
         }
         return Response(response)
 
+
+class PostCreateView(CreateAPIView):
+    permission_classes = (IsAuthenticated, )
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+
+    def perform_create(self, serializer):
+        serializer.save(auth=self.request.user)
+
+class PostUpdateView(UpdateAPIView):
+    permission_classes = (IsAuthenticated, )
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+
+    def update(self, request, *args, **kwargs):
+        instance=self.get_object()
+
+        if instance.auth!=request.user:
+            raise ValidationError({'message':"Siz o'zingizning postingizni update qila olasiz"})
+
+        serializer=self.get_serializer(instance,data=request.data,partial=True)
+
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer)
+
+        response={
+            'status':status.HTTP_200_OK,
+            'message':'malumotlar yangilandi',
+            'data':serializer.validated_data
+        }
+
+        return Response(response)
+
+
+    def perform_update(self, serializer):
+        serializer.save()

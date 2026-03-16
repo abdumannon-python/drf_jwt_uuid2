@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from .models import CustomUser
+from .models import *
 from shared.utility import check_email_or_phone, check_email_or_phone_or_username
 from .models import (
     VIA_PHONE,VIA_EMAIL,
@@ -324,4 +324,16 @@ class ResetPasswordSerializers(serializers.Serializer):
         instance.set_password(password)
         instance.save()
         return instance
+
+class PostSerializers(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            'text',
+            'image',
+            'video',
+            'created_at'
+        ]
 
