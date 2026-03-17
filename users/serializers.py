@@ -347,3 +347,23 @@ class CommentSerializers(serializers.ModelSerializer):
     class Meta:
         model=Comment
         fields=('id','post','text','created_at')
+
+class PostDetailSerilaizers(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    comments = CommentSerializers(many=True, read_only=True, source='comment_set')
+    likes_count=serializers.SerializerMethodField()
+    is_liked=serializers.SerializerMethodField()
+
+    class Meta:
+        model=Post
+        fields=('id','text','image','video','created_at','comments','likes_count', 'is_liked')
+
+    def get_likes_count(self,obj):
+        return obj.likes.count()
+
+    def get_is_liked(self,obj):
+        request=self.context.get("request")
+        if request.user.is_authenticated:
+            return obj.likes.filter(auth=request.user).exists()
+        return False
+

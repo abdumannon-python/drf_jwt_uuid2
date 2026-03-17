@@ -126,7 +126,7 @@ class Post(models.Model):
 
 class PostLike(models.Model):
     auth=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='like')
-    post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    post=models.ForeignKey(Post,on_delete=models.CASCADE,related_name='likes')
     created_at=models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -144,7 +144,6 @@ class Follow(models.Model):
     follower=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='follower')
     following=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='followers')
     created_at =models.DateTimeField(auto_now_add=True)
-
     class Meta:
         unique_together=('follower','following')
 

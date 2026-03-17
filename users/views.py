@@ -4,11 +4,6 @@ from rest_framework.generics import (CreateAPIView,
                                      )
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework import permissions
-from .models import (
-    CustomUser,CodeVerify,NEW,
-    CODE_VERIFY,DONE,PHOTO_DONE,
-    VIA_EMAIL,VIA_PHONE
-    )
 from .serializers import *
 from rest_framework.views import APIView
 from datetime import datetime
@@ -226,6 +221,8 @@ class ResetPasswordView(APIView):
         }
         return Response(response)
 
+"""         Post        """
+
 
 class PostCreateView(CreateAPIView):
     permission_classes = (IsAuthenticated, )
@@ -304,6 +301,26 @@ class PostDeleteView(DestroyAPIView):
             }
         return Response(response)
 
+
+class PostDetailView(APIView):
+    permission_classes = (IsAuthenticated,AllowAny)
+    def get(self,request,pk):
+        post=get_object_or_404(Post,id=pk)
+
+        serializer=PostDetailSerilaizers(post,context={'request': request})
+
+
+        response={
+            "status":status.HTTP_200_OK,
+            "message":"malumotlar",
+            'data':serializer.data
+        }
+
+        return Response(response)
+
+"""          Comment      """
+
+
 class CommentCreateView(APIView):
     permission_classes = (IsAuthenticated, )
     def post(self,request):
@@ -347,5 +364,18 @@ class CommentListView(ListAPIView):
         user=self.request.user
         return Comment.objects.filter(auth=user)
 
-class CommentDeleteView(DestroyAPIView):
-    pass
+class CommentDeleteView(APIView):
+    permission_classes = (IsAuthenticated,IsAuthor)
+    def post(self,request):
+        user=self.request.user
+        comment_id=self.request.data.get("comment_id")
+        comment=get_object_or_404(Comment,id=comment_id,auth=user)
+        comment.delete()
+
+        response={
+            'status':status.HTTP_200_OK,
+            'message':"malumot o'chirildi"
+        }
+        return Response(response)
+
+

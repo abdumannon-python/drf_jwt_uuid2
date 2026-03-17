@@ -20,9 +20,11 @@ urlpatterns=[
     path('list-post/',PostListView.as_view()),
     path('post-update/<int:pk>/',PostUpdateView.as_view()),
     path('post-delete/<int:pk>/',PostDeleteView.as_view()),
+    path('post-detail/<int:pk>/', PostDetailView.as_view()),
     # """comment-crud"""--------------,
     path('comment-create/',CommentCreateView.as_view()),
     path('comment-update/',CommentUpdateView.as_view()),
     path('comment-list/',CommentListView.as_view()),
+    path('comment-delete/',CommentDeleteView.as_view()),
 ]
 
