@@ -397,5 +397,3 @@ class CommentDeleteView(APIView):
             'message':"malumot o'chirildi"
         }
         return Response(response)
-
-
