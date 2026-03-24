@@ -340,7 +340,6 @@ class PostDetailView(APIView):
 
 """          Comment      """
 
-
 class CommentCreateView(APIView):
     permission_classes = (IsAuthenticated, )
     def post(self,request):

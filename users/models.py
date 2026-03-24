@@ -9,8 +9,6 @@ import random
 from conf.settings import EMAIL_EXPIRATION_TIME,PHONE_EXPIRATION_TIME
 
 
-
-
 ORDINARY_USER,ADMIN,MANAGER=("ordinary_user","admin",'manager')
 
 NEW,CODE_VERIFY,DONE,PHOTO_DONE =("new","code_verify",'done','photo_done')
